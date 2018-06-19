@@ -2,6 +2,8 @@
 #
 # all cribbed from https://hub.docker.com/r/panubo/mariadb-galera/
 
+include .env
+
 mysql_root_password = coffee
 wsrep_node_address_node-1 = 172.19.0.2
 wsrep_node_address_node-2 = 172.19.0.3
@@ -9,7 +11,11 @@ wsrep_node_address_node-3 = 172.19.0.4
 
 wsrep_cluster_address = gcomm://172.19.0.2:4567,172.19.0.3:4567,172.19.0.4:4567
 
-data_mount = /Users/user/data
+#data_mount = /Users/user/data
+
+test-env:
+	echo ${var1}
+	echo ${data_mount}
 
 shell-node-1:
 	docker exec -it galera-node-1 /usr/bin/mysql --user=root --password=$(mysql_root_password)
