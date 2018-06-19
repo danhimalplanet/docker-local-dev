@@ -17,42 +17,52 @@ test-env:
 	echo ${var1}
 	echo ${data_mount}
 
-shell-node-1:
-	docker exec -it galera-node-1 /usr/bin/mysql --user=root --password=$(mysql_root_password)
+prompt:
+	docker exec -it node-1 /usr/bin/mysql --user=root --password=$(mysql_root_password)
 
 create-network:
 	docker network create galera
 
 nuke:
-	sudo rm -rf /Users/user/data/galera.service/
+	sudo rm -rf /Users/user/data/galera.service/*
+	docker stop node-1
+	docker rm node-1
+	docker stop node-2
+	docker rm node-2
+	docker stop node-3
+	docker rm node-3
 
-bootstrap-node-1:
+node-1:
 	docker run -d --net host \
-		--name galera-node-1 \
+		--name node-1 \
 		--network galera \
   		-e WSREP_NODE_ADDRESS=$(wsrep_node_address_node-1) \
 		-e WSREP_CLUSTER_ADDRESS=$(wsrep_cluster_address) \
   		-e MYSQL_ROOT_PASSWORD=$(mysql_root_password) \
-  		-p 3306:3306 \
-  		-p 4567:4567/udp \
-  		-p 4567-4568:4567-4568 \
-  		-p 4444:4444 \
-  		-v $(data_mount)/galera.service/mysql:/var/lib/mysql:Z \
+  		-v $(data_mount)/galera.service/node1:/var/lib/mysql:Z \
   		panubo/mariadb-galera \
     	mysqld \
     	--wsrep-new-cluster
 
-bootstrap-node-2:
-	mkdir -p $(data_mount)/galera.service/mysql/mysql
+node-2:
+	mkdir -p $(data_mount)/galera.service/node2/mysql
 	docker run -d --net host \
-		--name galera-node-2 \
+		--name node-2 \
 		--network galera \
 		-e WSREP_NODE_ADDRESS=$(wsrep_node_address_node-2) \
 		-e WSREP_CLUSTER_ADDRESS=$(wsrep_cluster_address) \
-		-p 3306:3306 \
-		-p 4567:4567/udp \
-		-p 4567-4568:4567-4568 \
-		-p 4444:4444 \
-		-v $(data_mount)/galera.service/mysql:/var/lib/mysql:Z \
+		-v $(data_mount)/galera.service/node2:/var/lib/mysql:Z \
 		panubo/mariadb-galera \
 		mysqld
+
+node-3:
+	mkdir -p $(data_mount)/galera.service/node3/mysql
+	docker run -d --net host \
+		--name node-3 \
+        --network galera \
+        -e WSREP_NODE_ADDRESS=$(wsrep_node_address_node-3) \
+        -e WSREP_CLUSTER_ADDRESS=$(wsrep_cluster_address) \
+        -v $(data_mount)/galera.service/node3:/var/lib/mysql:Z \
+        panubo/mariadb-galera \
+        mysqld
+
