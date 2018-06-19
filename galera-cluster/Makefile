@@ -4,8 +4,6 @@
 
 include .env
 
-mysql_root_password = coffee
-
 test-env:
 	echo ${data_mount}
 
@@ -34,12 +32,12 @@ nuke:
 	sudo rm -rf $(data_mount)/galera.service/node1/*
 	sudo rm -rf $(data_mount)/galera.service/node2/*
 	sudo rm -rf $(data_mount)/galera.service/node3/*
-	docker stop node1
-	docker rm node1
-	docker stop node2
-	docker rm node2
-	docker stop node3
-	docker rm node3
+	docker stop node1 || true
+	docker rm node1 || true
+	docker stop node2 || true
+	docker rm node2 || true
+	docker stop node3 || true
+	docker rm node3 || true
 
 node1:
 	docker run -d --net host \
@@ -74,3 +72,12 @@ node3:
         -v $(data_mount)/galera.service/node3:/var/lib/mysql:Z \
         panubo/mariadb-galera \
         mysqld
+
+shutdown-node1:
+	docker exec -it node1 /usr/bin/mysqladmin --user=root --password=$(mysql_root_password) shutdown || true
+
+shutdown-node2:
+	docker exec -it node2 /usr/bin/mysqladmin --user=root --password=$(mysql_root_password) shutdown || true
+
+shutdown-node3:
+	docker exec -it node3 /usr/bin/mysqladmin --user=root --password=$(mysql_root_password) shutdown || true
