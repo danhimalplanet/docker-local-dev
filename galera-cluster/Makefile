@@ -11,6 +11,9 @@ wsrep_cluster_address = gcomm://172.19.0.2:4567,172.19.0.3:4567,172.19.0.4:4567
 
 data_mount = /Users/user/data
 
+shell-node-1:
+	docker exec -it galera-node-1 /usr/bin/mysql --user=root --password=$(mysql_root_password)
+
 create-network:
 	docker network create galera
 
