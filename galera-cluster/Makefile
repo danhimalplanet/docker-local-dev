@@ -81,3 +81,6 @@ shutdown-node2:
 
 shutdown-node3:
 	docker exec -it node3 /usr/bin/mysqladmin --user=root --password=$(mysql_root_password) shutdown || true
+
+shutdown: shutdown-node3 shutdown-node2 shutdown-node1
+
