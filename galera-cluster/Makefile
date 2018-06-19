@@ -9,8 +9,23 @@ mysql_root_password = coffee
 test-env:
 	echo ${data_mount}
 
-prompt:
+tail1:
+	docker logs node1 -f
+
+tail2:
+	docker logs node2 -f
+
+tail3:
+	docker logs node3 -f
+
+prompt1:
 	docker exec -it node1 /usr/bin/mysql --user=root --password=$(mysql_root_password)
+
+prompt2:
+	docker exec -it node2 /usr/bin/mysql --user=root --password=$(mysql_root_password)
+
+prompt3:
+	docker exec -it node3 /usr/bin/mysql --user=root --password=$(mysql_root_password)
 
 create-network:
 	docker network create galera
