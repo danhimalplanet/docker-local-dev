@@ -84,3 +84,5 @@ shutdown-node3:
 
 shutdown: shutdown-node3 shutdown-node2 shutdown-node1
 
+status:
+	docker exec -it node1 /usr/bin/mysql --user=root --password=$(mysql_root_password) -e "show status like 'wsrep_cluster_size'"
