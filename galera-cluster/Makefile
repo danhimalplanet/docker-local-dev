@@ -5,11 +5,6 @@
 include .env
 
 mysql_root_password = coffee
-wsrep_node_address_node1 = 172.19.0.2
-wsrep_node_address_node2 = 172.19.0.3
-wsrep_node_address_node3 = 172.19.0.4
-
-wsrep_cluster_address = gcomm://172.19.0.2:4567,172.19.0.3:4567,172.19.0.4:4567
 
 test-env:
 	echo ${data_mount}
@@ -29,7 +24,7 @@ nuke:
 	docker stop node2
 	docker rm node2
 	docker stop node3
-	docker rm node-3
+	docker rm node3
 
 node1:
 	docker run -d --net host \

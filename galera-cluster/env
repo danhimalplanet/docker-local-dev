@@ -1,2 +1,9 @@
 # set data_mount dir 
 data_mount = /Users/user/data
+
+# use proper subnet and ip addrs for your nodes
+wsrep_node_address_node1 = 172.19.0.2
+wsrep_node_address_node2 = 172.19.0.3
+wsrep_node_address_node3 = 172.19.0.4
+
+wsrep_cluster_address = gcomm://172.19.0.2:4567,172.19.0.3:4567,172.19.0.4:4567
