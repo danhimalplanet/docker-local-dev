@@ -4,6 +4,16 @@
 
 include .env
 
+# use proper subnet and ip addrs for your nodes
+
+wsrep_subnet = 172.40.0.0/16
+
+wsrep_node_address_node1 = 172.40.0.2
+wsrep_node_address_node2 = 172.40.0.3
+wsrep_node_address_node3 = 172.40.0.4
+
+wsrep_cluster_address = gcomm://172.40.0.2:4567,172.40.0.3:4567,172.40.0.4:4567
+
 test-env:
 	echo ${data_mount}
 
@@ -26,7 +36,7 @@ prompt3:
 	docker exec -it node3 /usr/bin/mysql --user=root --password=$(mysql_root_password)
 
 create-network:
-	docker network create galera
+	docker network create galera --subnet=$(wsrep_subnet)
 
 nuke:
 	sudo rm -rf $(data_mount)/galera.service/node1/*
@@ -40,9 +50,9 @@ nuke:
 	docker rm node3 || true
 
 node1:
-	docker run -d --net host \
+	docker run -d --net=galera \
 		--name node1 \
-		--network galera \
+		--ip=$(wsrep_node_address_node1) \
   		-e WSREP_NODE_ADDRESS=$(wsrep_node_address_node1) \
 		-e WSREP_CLUSTER_ADDRESS=$(wsrep_cluster_address) \
   		-e MYSQL_ROOT_PASSWORD=$(mysql_root_password) \
@@ -53,8 +63,9 @@ node1:
 
 node2:
 	mkdir -p $(data_mount)/galera.service/node2/mysql
-	docker run -d --net host \
+	docker run -d --net=galera \
 		--name node2 \
+		--ip=$(wsrep_node_address_node2) \
 		--network galera \
 		-e WSREP_NODE_ADDRESS=$(wsrep_node_address_node2) \
 		-e WSREP_CLUSTER_ADDRESS=$(wsrep_cluster_address) \
@@ -64,8 +75,9 @@ node2:
 
 node3:
 	mkdir -p $(data_mount)/galera.service/node3/mysql
-	docker run -d --net host \
+	docker run -d --net=galera \
 		--name node3 \
+		--ip=$(wsrep_node_address_node3) \
         --network galera \
         -e WSREP_NODE_ADDRESS=$(wsrep_node_address_node3) \
         -e WSREP_CLUSTER_ADDRESS=$(wsrep_cluster_address) \
